@@ -57,4 +57,8 @@ real_estate_project/
 └── static/
       └── style.css
 
+
+
+
+direct website link :    https://real-estate-price-prediction-project-70h9.onrender.com
       
