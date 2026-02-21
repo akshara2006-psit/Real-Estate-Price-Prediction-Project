@@ -1,0 +1,73 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bangalore House Price Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="background"></div>
+
+<div class="container">
+    <h1>🏠 Bangalore House Price Predictor</h1>
+    <p class="subtitle">AI-powered property price estimation</p>
+
+    <form id="predictForm">
+        <input type="number" id="sqft" placeholder="Total Square Feet" min="300" required>
+        <input type="number" id="bath" placeholder="Bathrooms" min="1" required>
+        <input type="number" id="bhk" placeholder="BHK" min="1" required>
+
+        <select id="location" required>
+            {% for loc in locations %}
+                <option value="{{loc}}">{{loc}}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Predict Price</button>
+    </form>
+
+    <div class="result" id="result"></div>
+</div>
+
+<script>
+document.getElementById("predictForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const sqft = document.getElementById("sqft").value;
+    const bath = document.getElementById("bath").value;
+    const bhk = document.getElementById("bhk").value;
+    const location = document.getElementById("location").value;
+
+    fetch("/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            sqft: sqft,
+            bath: bath,
+            bhk: bhk,
+            location: location
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            document.getElementById("result").innerHTML =
+                `<span style="color:red;">${data.error}</span>`;
+        } else {
+            document.getElementById("result").innerHTML =
+                `Estimated Price: ₹ ${data.estimated_price} Lakhs`;
+        }
+    })
+    .catch(error => {
+        document.getElementById("result").innerHTML =
+            `<span style="color:red;">Server Error</span>`;
+    });
+});
+</script>
+
+</body>
+</html>
